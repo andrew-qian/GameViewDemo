@@ -1,6 +1,7 @@
 package com.example.gameviewdemo;
 
 import android.content.Context;
+import android.graphics.Canvas;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
@@ -13,6 +14,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         super(context);
 
         getHolder().addCallback(this);
+
+        thread = new MainThread(getHolder(), this);
+        setFocusable(true);
     }
 
     @Override
@@ -45,8 +49,10 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     }
 
-    thread = new MainThread(getHolder(), this);
-    setFocusable(true);
+    @Override
+    public void draw(Canvas canvas){
+        super.draw(canvas);
+    }
 
 
 }
