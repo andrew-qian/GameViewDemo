@@ -31,7 +31,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
-        characterSprite = new CharacterSprite(BitmapFactory.decodeResource(getResources(),R.drawable.avdgreen));
+        characterSprite = new CharacterSprite(BitmapFactory.decodeResource(getResources(),R.drawable.alien));
 
         thread.setRunning(true);
         thread.t.start();
@@ -59,9 +59,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     @Override
     public void draw(Canvas canvas) {
         super.draw(canvas);
-        if (canvas != null) {
-            characterSprite.draw(canvas);
-        }
+        characterSprite.draw(canvas);
+
     }
 
 
