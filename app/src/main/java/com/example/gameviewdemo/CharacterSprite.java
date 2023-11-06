@@ -24,8 +24,8 @@ public class CharacterSprite {
     }
 
     public void update() {
-        if (x<0 && y < 0){
-            x = screenWidth /2;
+        if (x<5 && y < 5){
+            x = screenWidth/2;
             y = screenHeight/2;
         }
         else {
