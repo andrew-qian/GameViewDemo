@@ -16,11 +16,14 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     private CharacterSprite characterSprite;
 
+    private Bitmap background;
+
     public GameView(Context context) {
         super(context);
 
         getHolder().addCallback(this);
 
+        background = BitmapFactory.decodeResource(getResources(),R.drawable.background);
         thread = new MainThread(getHolder(), this);
         setFocusable(true);
     }
@@ -58,10 +61,15 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     @Override
+    protected void onDraw(Canvas canvas){
+        super.onDraw(canvas);
+        canvas.drawBitmap(background,0,0,null);
+    }
+
+    @Override
     public void draw(Canvas canvas) {
         super.draw(canvas);
         characterSprite.draw(canvas);
-
     }
 
 
