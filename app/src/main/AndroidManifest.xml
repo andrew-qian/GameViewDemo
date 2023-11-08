@@ -22,9 +22,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".StartGame"
-            android:exported="true">
-
+            android:name=".StartGame">
         </activity>
 
     </application>
