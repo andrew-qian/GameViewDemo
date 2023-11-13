@@ -15,6 +15,7 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 import java.time.chrono.ChronoLocalDate;
+import java.util.ArrayList;
 import java.util.Random;
 
 public class GameView extends SurfaceView implements SurfaceHolder.Callback {
@@ -24,15 +25,14 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     Bitmap background;
     Rect rect;
-    int dWidth, dHeight;
+    static int dWidth, dHeight;
+    ArrayList<SmallAlien> smallAliens;
 
-    Bitmap small_alien[] = new Bitmap[2];
-    int small_alienX, smallAlienY, velocity, small_alienFrame;
-    int small_alienWidth;
 
     Handler handler;
     Runnable runnable;
     final long UPDATE_MILLIS = 30;
+
 
     public GameView(Context context) {
         super(context);
@@ -47,13 +47,12 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         dHeight= size.y;
         rect = new Rect(0,0,dWidth,dHeight);
         thread = new MainThread(getHolder(), this);
-        small_alien[0] = BitmapFactory.decodeResource(getResources(), R.drawable.small_alien1);
-        small_alien[1] = BitmapFactory.decodeResource(getResources(), R.drawable.small_alien2);
-        small_alienX = 400;
-        smallAlienY = 100;
-        velocity = 2;
-        small_alienFrame = 0;
-        small_alienWidth = small_alien[0].getWidth();
+        smallAliens = new ArrayList<>();
+        for(int i=0; i<2;i++){
+            SmallAlien smallAlien = new SmallAlien(context);
+            smallAliens.add(smallAlien);
+        }
+
         handler = new Handler();
         runnable = new Runnable() {
             @Override
@@ -104,15 +103,20 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     public void draw(Canvas canvas) {
         super.draw(canvas);
         canvas.drawBitmap(background,null,rect,null);
-        canvas.drawBitmap(small_alien[small_alienFrame], small_alienX, smallAlienY, null);
-
-        if small_alienFrame++;
-        if(small_alienFrame > 1){
-            small_alienFrame = 0;
-        }
-        small_alienX -= velocity;
-        if (small_alienX < 5 || small_alienX > (dWidth - small_alienWidth - 5)){
-            velocity = -velocity;
+        for(int i=0; i<smallAliens.size(); i++){
+            SmallAlien currentSA = smallAliens.get(i);
+            canvas.drawBitmap(currentSA.getBitmap(), currentSA.small_alienX, currentSA.smallAlienY, null);
+            currentSA.small_alienFrame++;
+            if(currentSA.small_alienFrame > 1){
+                currentSA.small_alienFrame = 0;
+            }
+            currentSA.small_alienX -= currentSA.velocity;
+            if(currentSA.small_alienX < currentSA.getWidth()){
+                currentSA.resetPosition();
+                if (currentSA.small_alienX < 5 || currentSA.small_alienX > (dWidth - currentSA.getWidth() - 5)){
+                    currentSA.velocity = -currentSA.velocity;
+              }
+            }
         }
         handler.postDelayed(runnable, UPDATE_MILLIS);
     }
