@@ -17,6 +17,13 @@ public class SmallAlien {
         resetPosition();
     }
 
+    public void resetPosition(){
+        small_alienX = GameView.dWidth - 400;
+        smallAlienY = 100;
+        velocity = 15;
+        small_alienFrame = 0;
+    }
+
     public Bitmap getBitmap(){
         return small_alien[small_alienFrame];
     }
@@ -29,10 +36,21 @@ public class SmallAlien {
         return small_alien[0].getHeight();
     }
 
-    public void resetPosition(){
-        small_alienX = GameView.dWidth + 20;
-        smallAlienY = 100;
-        velocity = 15;
-        small_alienFrame = 0;
+    public void setSmall_alienX(int small_alienX) {
+        this.small_alienX = small_alienX;
     }
+
+    public int getSmall_alienX() {
+        return small_alienX;
+    }
+
+    public int getSmallAlienY() {
+        return smallAlienY;
+    }
+
+    public void setSmallAlienY(int smallAlienY) {
+        this.smallAlienY = smallAlienY;
+    }
+
+
 }

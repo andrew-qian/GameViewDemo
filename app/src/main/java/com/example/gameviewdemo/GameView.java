@@ -50,6 +50,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         smallAliens = new ArrayList<>();
         for(int i=0; i<2;i++){
             SmallAlien smallAlien = new SmallAlien(context);
+            smallAlien.setSmall_alienX(smallAlien.getSmall_alienX() - i*(smallAlien.getWidth() + 50));
             smallAliens.add(smallAlien);
         }
 
@@ -103,6 +104,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     public void draw(Canvas canvas) {
         super.draw(canvas);
         canvas.drawBitmap(background,null,rect,null);
+
+
         for(int i=0; i<smallAliens.size(); i++){
             SmallAlien currentSA = smallAliens.get(i);
             canvas.drawBitmap(currentSA.getBitmap(), currentSA.small_alienX, currentSA.smallAlienY, null);
@@ -110,13 +113,17 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
             if(currentSA.small_alienFrame > 1){
                 currentSA.small_alienFrame = 0;
             }
-            currentSA.small_alienX -= currentSA.velocity;
-            if(currentSA.small_alienX < currentSA.getWidth()){
-                currentSA.resetPosition();
-                if (currentSA.small_alienX < 5 || currentSA.small_alienX > (dWidth - currentSA.getWidth() - 5)){
-                    currentSA.velocity = -currentSA.velocity;
-              }
+            try {
+                Thread.sleep(UPDATE_MILLIS + 70);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
             }
+            currentSA.small_alienX -= currentSA.velocity;
+            if ((currentSA.small_alienX - currentSA.getWidth())< 5 || (currentSA.small_alienX + currentSA.getWidth()) > (dWidth - currentSA.getWidth() - 5)){
+                currentSA.velocity = -currentSA.velocity;
+                currentSA.setSmallAlienY(currentSA.getSmallAlienY() + 100);
+            }
+
         }
         handler.postDelayed(runnable, UPDATE_MILLIS);
     }
