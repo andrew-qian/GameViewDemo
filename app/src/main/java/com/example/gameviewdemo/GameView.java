@@ -21,8 +21,6 @@ import java.util.Random;
 public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     private MainThread thread;
 
-    private CharacterSprite characterSprite;
-
     Bitmap background;
     Rect rect;
     static int dWidth, dHeight;
@@ -70,8 +68,6 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
-        characterSprite = new CharacterSprite(BitmapFactory.decodeResource(getResources(),R.drawable.alien));
-
         thread.setRunning(true);
         thread.t.start();
 
@@ -92,19 +88,14 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     public void update() {
-        characterSprite.update();
     }
 
-    @Override
-    protected void onDraw(Canvas canvas){
 
-    }
 
     @Override
     public void draw(Canvas canvas) {
         super.draw(canvas);
         canvas.drawBitmap(background,null,rect,null);
-
 
         for(int i=0; i<smallAliens.size(); i++){
             SmallAlien currentSA = smallAliens.get(i);
@@ -119,9 +110,18 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
                 throw new RuntimeException(e);
             }
             currentSA.small_alienX -= currentSA.velocity;
-            if ((currentSA.small_alienX - currentSA.getWidth())< 5 || (currentSA.small_alienX + currentSA.getWidth()) > (dWidth - currentSA.getWidth() - 5)){
-                currentSA.velocity = -currentSA.velocity;
-                currentSA.setSmallAlienY(currentSA.getSmallAlienY() + 100);
+            if (i == 1) {
+                if ((currentSA.small_alienX - currentSA.getWidth()) < 5 || (currentSA.small_alienX + currentSA.getWidth()) > (dWidth - currentSA.getWidth() - 5)) {
+                    currentSA.velocity = -currentSA.velocity;
+                    currentSA.setSmallAlienY(currentSA.getSmallAlienY() + 100);
+                }
+            }
+            else{
+                SmallAlien lead = smallAliens.get(1);
+                currentSA.setSmallAlienY(lead.getSmallAlienY());
+                if ((lead.small_alienX - lead.getWidth()) < 5 || (lead.small_alienX + lead.getWidth()) > (dWidth - lead.getWidth() - 5)) {
+                    currentSA.velocity = -currentSA.velocity;
+                }
             }
 
         }
