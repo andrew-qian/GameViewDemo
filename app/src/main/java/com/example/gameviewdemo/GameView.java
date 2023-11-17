@@ -17,7 +17,7 @@ import java.util.ArrayList;
 public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     private MainThread thread;
 
-    Bitmap background;
+    Bitmap background, tank;
     Rect rect;
     static int dWidth, dHeight;
     ArrayList<Alien> aliens, mediumAliens;
@@ -25,6 +25,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     Handler handler;
     Runnable runnable;
     final long UPDATE_MILLIS = 30;
+    int tankWidth, tankHeight;
 
 
     public GameView(Context context) {
@@ -33,6 +34,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         getHolder().addCallback(this);
 
         background = BitmapFactory.decodeResource(getResources(),R.drawable.background);
+        tank = BitmapFactory.decodeResource(getResources(), R.drawable.tank);
         Display display = ((Activity)getContext()).getWindowManager().getDefaultDisplay();
         Point size = new Point();
         display.getSize(size);
@@ -47,6 +49,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
             alien.setAlienX(alien.getAlienX() - i*(alien.getWidth() + 50));
             aliens.add(alien);
             MediumAlien mediumAlien = new MediumAlien(context);
+            mediumAlien.setAlienX(mediumAlien.getAlienX() - i*(mediumAlien.getWidth() + 50));
             mediumAliens.add(mediumAlien);
         }
 
@@ -57,6 +60,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
                 invalidate();
             }
         };
+        tankWidth = tank.getWidth();
+        tankHeight = tank.getHeight();
     }
 
     @Override
@@ -103,6 +108,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
             if(currentSA.alienFrame > 1){
                 currentSA.alienFrame = 0;
             }
+
             Alien currentMA = mediumAliens.get(i);
             canvas.drawBitmap(currentMA.getBitmap(), currentMA.alienX, currentMA.alienY, null );
             currentMA.alienFrame++;
@@ -114,22 +120,36 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
+
             currentSA.alienX -= currentSA.velocity;
-            if ((currentSA.alienX - currentSA.getWidth()) < 5 || (currentSA.alienX + currentSA.getWidth()) > (dWidth - currentSA.getWidth() - 5)) {
+            Alien lead = aliens.get(1);
+            if ((lead.alienX - lead.getWidth()) < 5 || (lead.alienX + lead.getWidth()) > (dWidth - lead.getWidth() - 5)) {
                 if (i == 1) {
                     currentSA.velocity = -currentSA.velocity;
                     currentSA.setAlienY(currentSA.getAlienY() + 100);
                 } else {
-                    Alien lead = aliens.get(1);
                     currentSA.setAlienY(lead.getAlienY());
                     currentSA.velocity = -currentSA.velocity;
-
                 }
 
             }
-            currentMA.alienX -= currentSA.velocity;
+
+            currentMA.alienX -= currentMA.velocity;
+            Alien leadMedium = mediumAliens.get(1);
+
+            if ((leadMedium.alienX - leadMedium.getWidth()) < 5 || (leadMedium.alienX + leadMedium.getWidth()) > (dWidth - leadMedium.getWidth() - 5)) {
+                if (i == 1) {
+                    currentMA.velocity = -currentMA.velocity;
+                    currentMA.setAlienY(currentMA.getAlienY() + 100);
+                } else {
+                    currentMA.setAlienY(leadMedium.getAlienY());
+                    currentMA.velocity = -currentMA.velocity;
+                }
+
+            }
 
         }
+        canvas.drawBitmap(tank, (dWidth/2 - tankWidth/2), dHeight-tankHeight, null);
         handler.postDelayed(runnable, UPDATE_MILLIS);
     }
 
