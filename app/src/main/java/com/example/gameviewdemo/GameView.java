@@ -8,7 +8,9 @@ import android.graphics.Canvas;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.os.Handler;
+import android.util.Log;
 import android.view.Display;
+import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
@@ -20,12 +22,15 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     Bitmap background, tank;
     Rect rect;
     static int dWidth, dHeight;
-    ArrayList<Alien> aliens, mediumAliens;
+    ArrayList<Alien> aliens, mediumAliens, missiles, explosions;
 
     Handler handler;
     Runnable runnable;
     final long UPDATE_MILLIS = 30;
-    int tankWidth, tankHeight;
+    int tankWidth;
+    static int tankHeight;
+
+
 
 
     public GameView(Context context) {
@@ -43,6 +48,10 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         rect = new Rect(0,0,dWidth,dHeight);
         thread = new MainThread(getHolder(), this);
         aliens = new ArrayList<>();
+        missiles = new ArrayList<>();
+        explosions = new ArrayList<>();
+
+
         mediumAliens = new ArrayList<>();
         for(int i=0; i<2;i++){
             Alien alien = new Alien(context);
@@ -151,6 +160,26 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         }
         canvas.drawBitmap(tank, (dWidth/2 - tankWidth/2), dHeight-tankHeight, null);
         handler.postDelayed(runnable, UPDATE_MILLIS);
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        float touchX = event.getX();
+        float touchY = event.getY();
+        int action = event.getAction();
+        if(action == MotionEvent.ACTION_DOWN){
+            if(touchX >= (dWidth/2 - tankWidth/2) && touchX <= (dWidth/2 + tankWidth/2) && touchY >= (dHeight - tankHeight)){ // change so on some button
+                Log.i("Tank","is tapped");
+                if (missiles.size() < 3) {
+                    Missile m = new Missile(context);
+                    missiles.add(m);
+                    if(fire != 0){
+                        sp.play(fire, 1, 1, 0, 0, 1);
+                    }
+                }
+            }
+        }
+        return true;
     }
 
 
