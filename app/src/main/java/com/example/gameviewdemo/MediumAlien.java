@@ -6,36 +6,75 @@ import android.graphics.BitmapFactory;
 
 public class MediumAlien extends Alien {
 
-    Bitmap alien[] = new Bitmap[2];
+    Bitmap mediumalien[] = new Bitmap[2];
+
+    int mediumalienX, mediumalienY, mediumalienvelocity, mediumalienFrame;
+
 
     public MediumAlien(Context context) {
         super(context);
-        alien[0] = BitmapFactory.decodeResource(context.getResources(), R.drawable.medium_alien1);
-        alien[1] = BitmapFactory.decodeResource(context.getResources(), R.drawable.medium_alien2);
+        mediumalien[0] = BitmapFactory.decodeResource(context.getResources(), R.drawable.medium_alien1);
+        mediumalien[1] = BitmapFactory.decodeResource(context.getResources(), R.drawable.medium_alien2);
     }
 
     @Override
     public void resetPosition() {
-        alienX = GameView.dWidth - 400;
-        alienY = 250;
-        velocity = 15;
-        alienFrame = 0;
+        mediumalienX = GameView.dWidth - 400;
+        mediumalienY = 250;
+        mediumalienvelocity = 15;
+        mediumalienFrame = 0;
     }
+
+
 
     @Override
     public Bitmap getBitmap() {
-        return alien[alienFrame];
+        return mediumalien[mediumalienFrame];
     }
 
     @Override
     public int getWidth() {
-        return alien[0].getWidth();
+        return mediumalien[0].getWidth();
     }
 
     @Override
     public int getHeight() {
-        return alien[0].getHeight();
+        return mediumalien[0].getHeight();
     }
 
+    @Override
+    public int getMediumalienX() {
+        return mediumalienX;
+    }
 
+    @Override
+    public void setMediumalienX(int mediumalienX) {
+        this.mediumalienX = mediumalienX;
+    }
+
+    @Override
+    public int getMediumalienY() {
+        return mediumalienY;
+    }
+
+    @Override
+    public void setMediumalienY(int mediumalienY) {
+        this.mediumalienY = mediumalienY;
+    }
+
+    public int getMediumalienvelocity() {
+        return mediumalienvelocity;
+    }
+
+    public void setMediumalienvelocity(int mediumalienvelocity) {
+        this.mediumalienvelocity = mediumalienvelocity;
+    }
+
+    public int getMediumalienFrame() {
+        return mediumalienFrame;
+    }
+
+    public void setMediumalienFrame(int mediumalienFrame) {
+        this.mediumalienFrame = mediumalienFrame;
+    }
 }

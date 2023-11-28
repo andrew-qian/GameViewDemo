@@ -36,20 +36,20 @@ public class Alien {
         return alien[0].getHeight();
     }
 
-    public void setAlienX(int alienX) {
-        this.alienX = alienX;
+    public void setMediumalienX(int mediumalienX) {
+        this.alienX = mediumalienX;
     }
 
-    public int getAlienX() {
+    public int getMediumalienX() {
         return alienX;
     }
 
-    public int getAlienY() {
+    public int getMediumalienY() {
         return alienY;
     }
 
-    public void setAlienY(int alienY) {
-        this.alienY = alienY;
+    public void setMediumalienY(int mediumalienY) {
+        this.alienY = mediumalienY;
     }
 
 

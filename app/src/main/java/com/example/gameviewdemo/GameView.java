@@ -22,7 +22,10 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     Bitmap background, tank;
     Rect rect;
     static int dWidth, dHeight;
-    ArrayList<Alien> aliens, mediumAliens, missiles, explosions;
+    ArrayList<Alien> aliens;
+    ArrayList<MediumAlien> mediumAliens;
+    ArrayList<Missile> missiles;
+    ArrayList<Explosion> explosions;
 
     Handler handler;
     Runnable runnable;
@@ -30,22 +33,24 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     int tankWidth;
     static int tankHeight;
 
-
+    Context context;
+    int fire = 0, point = 0, count = 0;
 
 
     public GameView(Context context) {
         super(context);
+        this.context = context;
 
         getHolder().addCallback(this);
 
-        background = BitmapFactory.decodeResource(getResources(),R.drawable.background);
+        background = BitmapFactory.decodeResource(getResources(), R.drawable.background);
         tank = BitmapFactory.decodeResource(getResources(), R.drawable.tank);
-        Display display = ((Activity)getContext()).getWindowManager().getDefaultDisplay();
+        Display display = ((Activity) getContext()).getWindowManager().getDefaultDisplay();
         Point size = new Point();
         display.getSize(size);
         dWidth = size.x;
-        dHeight= size.y;
-        rect = new Rect(0,0,dWidth,dHeight);
+        dHeight = size.y;
+        rect = new Rect(0, 0, dWidth, dHeight);
         thread = new MainThread(getHolder(), this);
         aliens = new ArrayList<>();
         missiles = new ArrayList<>();
@@ -53,12 +58,12 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
 
         mediumAliens = new ArrayList<>();
-        for(int i=0; i<2;i++){
+        for (int i = 0; i < 2; i++) {
             Alien alien = new Alien(context);
-            alien.setAlienX(alien.getAlienX() - i*(alien.getWidth() + 50));
+            alien.setMediumalienX(alien.getMediumalienX() - i * (alien.getWidth() + 50));
             aliens.add(alien);
             MediumAlien mediumAlien = new MediumAlien(context);
-            mediumAlien.setAlienX(mediumAlien.getAlienX() - i*(mediumAlien.getWidth() + 50));
+            mediumAlien.setMediumalienX(mediumAlien.getMediumalienX() - i * (mediumAlien.getWidth() + 50));
             mediumAliens.add(mediumAlien);
         }
 
@@ -104,24 +109,23 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     }
 
 
-
     @Override
     public void draw(Canvas canvas) {
         super.draw(canvas);
-        canvas.drawBitmap(background,null,rect,null);
+        canvas.drawBitmap(background, null, rect, null);
 
-        for(int i = 0; i< aliens.size(); i++){
+        for (int i = 0; i < aliens.size(); i++) {
             Alien currentSA = aliens.get(i);
             canvas.drawBitmap(currentSA.getBitmap(), currentSA.alienX, currentSA.alienY, null);
             currentSA.alienFrame++;
-            if(currentSA.alienFrame > 1){
+            if (currentSA.alienFrame > 1) {
                 currentSA.alienFrame = 0;
             }
 
             Alien currentMA = mediumAliens.get(i);
-            canvas.drawBitmap(currentMA.getBitmap(), currentMA.alienX, currentMA.alienY, null );
+            canvas.drawBitmap(currentMA.getBitmap(), currentMA.alienX, currentMA.alienY, null);
             currentMA.alienFrame++;
-            if(currentMA.alienFrame > 1){
+            if (currentMA.alienFrame > 1) {
                 currentMA.alienFrame = 0;
             }
             try {
@@ -135,9 +139,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
             if ((lead.alienX - lead.getWidth()) < 5 || (lead.alienX + lead.getWidth()) > (dWidth - lead.getWidth() - 5)) {
                 if (i == 1) {
                     currentSA.velocity = -currentSA.velocity;
-                    currentSA.setAlienY(currentSA.getAlienY() + 100);
+                    currentSA.setMediumalienY(currentSA.getMediumalienY() + 100);
                 } else {
-                    currentSA.setAlienY(lead.getAlienY());
+                    currentSA.setMediumalienY(lead.getMediumalienY());
                     currentSA.velocity = -currentSA.velocity;
                 }
 
@@ -149,18 +153,87 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
             if ((leadMedium.alienX - leadMedium.getWidth()) < 5 || (leadMedium.alienX + leadMedium.getWidth()) > (dWidth - leadMedium.getWidth() - 5)) {
                 if (i == 1) {
                     currentMA.velocity = -currentMA.velocity;
-                    currentMA.setAlienY(currentMA.getAlienY() + 100);
+                    currentMA.setMediumalienY(currentMA.getMediumalienY() + 100);
                 } else {
-                    currentMA.setAlienY(leadMedium.getAlienY());
+                    currentMA.setMediumalienY(leadMedium.getMediumalienY());
                     currentMA.velocity = -currentMA.velocity;
                 }
 
             }
 
         }
-        canvas.drawBitmap(tank, (dWidth/2 - tankWidth/2), dHeight-tankHeight, null);
-        handler.postDelayed(runnable, UPDATE_MILLIS);
-    }
+
+        for (int i = 0; i < missiles.size(); i++) {
+            if (missiles.get(i).y > -missiles.get(i).getMissileHeight()) {
+
+                missiles.get(i).y -= missiles.get(i).mVelocity;
+                canvas.drawBitmap(missiles.get(i).missile, missiles.get(i).x, missiles.get(i).y, null);
+                if (missiles.get(i).x >= aliens.get(0).alienX && (missiles.get(i).x + missiles.get(i).getMissileWidth())
+                        <= (aliens.get(0).alienX + aliens.get(0).getWidth()) && missiles.get(i).y >= aliens.get(0).alienY &&
+                        missiles.get(i).y <= (aliens.get(0).alienY + aliens.get(0).getHeight())) {
+                    Explosion explosion = new Explosion(context);
+                    explosion.explosionX = aliens.get(0).alienX + aliens.get(0).getWidth() / 2 - explosion.getExplosionWidth() / 2;
+                    explosion.explosionY = aliens.get(0).alienY + aliens.get(0).getHeight() / 2 - explosion.getExplosionHeight() / 2;
+                    explosions.add(explosion);
+                    aliens.get(0).resetPosition();
+                    count++;
+                    missiles.remove(i);
+
+                } else if (missiles.get(i).x >= aliens.get(1).alienX && (missiles.get(i).x + missiles.get(i).getMissileWidth())
+                        <= (aliens.get(1).alienX + aliens.get(1).getWidth()) && missiles.get(i).y >= aliens.get(1).alienY &&
+                        missiles.get(i).y <= (aliens.get(1).alienY + aliens.get(1).getHeight())) {
+                    Explosion explosion = new Explosion(context);
+                    explosion.explosionX = aliens.get(1).alienX + aliens.get(1).getWidth() / 2 - explosion.getExplosionWidth() / 2;
+                    explosion.explosionY = aliens.get(1).alienY + aliens.get(1).getHeight() / 2 - explosion.getExplosionHeight() / 2;
+                    explosions.add(explosion);
+                    aliens.get(1).resetPosition();
+                    count++;
+                    missiles.remove(i);
+                }
+//
+
+                else if (missiles.get(i).x >= mediumAliens.get(0).mediumalienX && (missiles.get(i).x + missiles.get(i).getMissileWidth())
+                        <= (mediumAliens.get(0).mediumalienX + mediumAliens.get(0).getWidth()) && missiles.get(i).y >= mediumAliens.get(0).mediumalienY &&
+                        missiles.get(i).y <= (mediumAliens.get(0).mediumalienY + mediumAliens.get(0).getHeight())) {
+                    Explosion explosion = new Explosion(context);
+                    explosion.explosionX = mediumAliens.get(0).mediumalienX + mediumAliens.get(0).getWidth() / 2 - explosion.getExplosionWidth() / 2;
+                    explosion.explosionY = mediumAliens.get(0).mediumalienY + mediumAliens.get(0).getHeight() / 2 - explosion.getExplosionHeight() / 2;
+                    explosions.add(explosion);
+                    count++;
+                    missiles.remove(i);
+
+
+                } else if (missiles.get(i).x >= mediumAliens.get(1).mediumalienX && (missiles.get(i).x + missiles.get(i).getMissileWidth())
+                        <= (mediumAliens.get(1).mediumalienX + mediumAliens.get(1).getWidth()) && missiles.get(i).y >= mediumAliens.get(1).mediumalienY &&
+                        missiles.get(i).y <= (mediumAliens.get(1).mediumalienY + mediumAliens.get(1).getHeight())) {
+                    Explosion explosion = new Explosion(context);
+                    explosion.explosionX = mediumAliens.get(1).mediumalienX + mediumAliens.get(1).getWidth() / 2 - explosion.getExplosionWidth() / 2;
+                    explosion.explosionY = mediumAliens.get(1).mediumalienY + mediumAliens.get(1).getHeight() / 2 - explosion.getExplosionHeight() / 2;
+                    explosions.add(explosion);
+                    count++;
+                    missiles.remove(i);
+
+                    }
+                } else {
+                    missiles.remove(i);
+                }
+
+        }
+        for(int j=0; j<explosions.size(); j++){
+            canvas.drawBitmap(explosions.get(j).getExplosion(explosions.get(j).explosionFrame), explosions.get(j).explosionX,
+                    explosions.get(j).explosionY, null);
+            explosions.get(j).explosionFrame++;
+            if(explosions.get(j).explosionFrame > 0){
+                explosions.remove(j);
+            }
+        }
+
+            canvas.drawBitmap(tank, (dWidth / 2 - tankWidth / 2), dHeight - tankHeight, null);
+            handler.postDelayed(runnable, UPDATE_MILLIS);
+        }
+
+
+
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
@@ -173,9 +246,6 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
                 if (missiles.size() < 3) {
                     Missile m = new Missile(context);
                     missiles.add(m);
-                    if(fire != 0){
-                        sp.play(fire, 1, 1, 0, 0, 1);
-                    }
                 }
             }
         }
