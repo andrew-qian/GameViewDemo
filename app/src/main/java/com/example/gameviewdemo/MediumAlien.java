@@ -8,6 +8,7 @@ public class MediumAlien extends Alien {
 
     Bitmap mediumalien[] = new Bitmap[2];
 
+
     int mediumalienX, mediumalienY, mediumalienvelocity, mediumalienFrame;
 
 
@@ -23,6 +24,14 @@ public class MediumAlien extends Alien {
         mediumalienY = 250;
         mediumalienvelocity = 15;
         mediumalienFrame = 0;
+    }
+
+    @Override
+    public void blankSprite(Context context) {
+        Bitmap temp[] = new Bitmap[2];
+        temp[0] = BitmapFactory.decodeResource(context.getResources(), R.drawable.blank_pixel);
+        temp[1] = BitmapFactory.decodeResource(context.getResources(), R.drawable.blank_pixel);
+        setMediumalien(temp);
     }
 
 
@@ -77,4 +86,13 @@ public class MediumAlien extends Alien {
     public void setMediumalienFrame(int mediumalienFrame) {
         this.mediumalienFrame = mediumalienFrame;
     }
+
+    public Bitmap[] getMediumalien() {
+        return mediumalien;
+    }
+
+    public void setMediumalien(Bitmap[] mediumalien) {
+        this.mediumalien = mediumalien;
+    }
+
 }

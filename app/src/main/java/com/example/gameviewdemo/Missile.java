@@ -12,7 +12,7 @@ public class Missile {
         missile = BitmapFactory.decodeResource(context.getResources(), R.drawable.missile);
         x = GameView.dWidth/2 - getMissileWidth()/2;
         y = GameView.dHeight - GameView.tankHeight - getMissileHeight()/2;
-        mVelocity = 50;
+        mVelocity = 100;
     }
     public int getMissileWidth(){
         return missile.getWidth();

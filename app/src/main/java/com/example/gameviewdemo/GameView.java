@@ -53,11 +53,12 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         rect = new Rect(0, 0, dWidth, dHeight);
         thread = new MainThread(getHolder(), this);
         aliens = new ArrayList<>();
+        mediumAliens = new ArrayList<>();
         missiles = new ArrayList<>();
         explosions = new ArrayList<>();
 
 
-        mediumAliens = new ArrayList<>();
+
         for (int i = 0; i < 2; i++) {
             Alien alien = new Alien(context);
             alien.setMediumalienX(alien.getMediumalienX() - i * (alien.getWidth() + 50));
@@ -114,7 +115,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         super.draw(canvas);
         canvas.drawBitmap(background, null, rect, null);
 
-        for (int i = 0; i < aliens.size(); i++) {
+        int greater = Math.max(mediumAliens.size(), aliens.size());
+
+        for (int i = 0; i < greater; i++) {
             Alien currentSA = aliens.get(i);
             canvas.drawBitmap(currentSA.getBitmap(), currentSA.alienX, currentSA.alienY, null);
             currentSA.alienFrame++;
@@ -128,6 +131,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
             if (currentMA.mediumalienFrame > 1) {
                 currentMA.mediumalienFrame = 0;
             }
+
+
             try {
                 Thread.sleep(UPDATE_MILLIS + 70);
             } catch (InterruptedException e) {
@@ -175,7 +180,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
                     explosion.explosionX = aliens.get(0).alienX + aliens.get(0).getWidth() / 2 - explosion.getExplosionWidth() / 2;
                     explosion.explosionY = aliens.get(0).alienY + aliens.get(0).getHeight() / 2 - explosion.getExplosionHeight() / 2;
                     explosions.add(explosion);
-                    aliens.get(0).resetPosition();
+                    aliens.set(0, null);
+//                    aliens.get(0).blankSprite(context);
                     count++;
                     missiles.remove(i);
 
@@ -186,7 +192,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
                     explosion.explosionX = aliens.get(1).alienX + aliens.get(1).getWidth() / 2 - explosion.getExplosionWidth() / 2;
                     explosion.explosionY = aliens.get(1).alienY + aliens.get(1).getHeight() / 2 - explosion.getExplosionHeight() / 2;
                     explosions.add(explosion);
-                    aliens.get(1).resetPosition();
+                    aliens.set(1, null);
+//                    aliens.get(1).blankSprite(context);
                     count++;
                     missiles.remove(i);
                 }
@@ -199,6 +206,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
                     explosion.explosionX = mediumAliens.get(0).mediumalienX + mediumAliens.get(0).getWidth() / 2 - explosion.getExplosionWidth() / 2;
                     explosion.explosionY = mediumAliens.get(0).mediumalienY + mediumAliens.get(0).getHeight() / 2 - explosion.getExplosionHeight() / 2;
                     explosions.add(explosion);
+                    mediumAliens.set(0, null);
+
+//                    mediumAliens.get(0).blankSprite(context);
                     count++;
                     missiles.remove(i);
 
@@ -210,6 +220,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
                     explosion.explosionX = mediumAliens.get(1).mediumalienX + mediumAliens.get(1).getWidth() / 2 - explosion.getExplosionWidth() / 2;
                     explosion.explosionY = mediumAliens.get(1).mediumalienY + mediumAliens.get(1).getHeight() / 2 - explosion.getExplosionHeight() / 2;
                     explosions.add(explosion);
+                    mediumAliens.set(1, null);
+
+//                    mediumAliens.get(1).blankSprite(context);
                     count++;
                     missiles.remove(i);
 
@@ -219,6 +232,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
                 }
 
         }
+
         for(int j=0; j<explosions.size(); j++){
             canvas.drawBitmap(explosions.get(j).getExplosion(explosions.get(j).explosionFrame), explosions.get(j).explosionX,
                     explosions.get(j).explosionY, null);
@@ -228,8 +242,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
             }
         }
 
-            canvas.drawBitmap(tank, (dWidth / 2 - tankWidth / 2), dHeight - tankHeight, null);
-            handler.postDelayed(runnable, UPDATE_MILLIS);
+        canvas.drawBitmap(tank, (dWidth / 2 - tankWidth / 2), dHeight - tankHeight, null);
+        handler.postDelayed(runnable, UPDATE_MILLIS);
         }
 
 

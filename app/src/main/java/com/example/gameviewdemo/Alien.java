@@ -24,6 +24,13 @@ public class Alien {
         alienFrame = 0;
     }
 
+    public void blankSprite(Context context) {
+        Bitmap temp[] = new Bitmap[2];
+        temp[0] = BitmapFactory.decodeResource(context.getResources(), R.drawable.blank_pixel);
+        temp[1] = BitmapFactory.decodeResource(context.getResources(), R.drawable.blank_pixel);
+        setAlien(temp);
+    }
+
     public Bitmap getBitmap(){
         return alien[alienFrame];
     }
@@ -53,4 +60,11 @@ public class Alien {
     }
 
 
+    public Bitmap[] getAlien() {
+        return alien;
+    }
+
+    public void setAlien(Bitmap[] alien) {
+        this.alien = alien;
+    }
 }
