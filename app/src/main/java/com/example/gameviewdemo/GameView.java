@@ -122,11 +122,11 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
                 currentSA.alienFrame = 0;
             }
 
-            Alien currentMA = mediumAliens.get(i);
-            canvas.drawBitmap(currentMA.getBitmap(), currentMA.alienX, currentMA.alienY, null);
-            currentMA.alienFrame++;
-            if (currentMA.alienFrame > 1) {
-                currentMA.alienFrame = 0;
+            MediumAlien currentMA = mediumAliens.get(i);
+            canvas.drawBitmap(currentMA.getBitmap(), currentMA.mediumalienX, currentMA.mediumalienY, null);
+            currentMA.mediumalienFrame++;
+            if (currentMA.mediumalienFrame > 1) {
+                currentMA.mediumalienFrame = 0;
             }
             try {
                 Thread.sleep(UPDATE_MILLIS + 70);
@@ -147,16 +147,16 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
             }
 
-            currentMA.alienX -= currentMA.velocity;
-            Alien leadMedium = mediumAliens.get(1);
+            currentMA.mediumalienX -= currentMA.mediumalienvelocity;
+            MediumAlien leadMedium = mediumAliens.get(1);
 
-            if ((leadMedium.alienX - leadMedium.getWidth()) < 5 || (leadMedium.alienX + leadMedium.getWidth()) > (dWidth - leadMedium.getWidth() - 5)) {
+            if ((leadMedium.mediumalienX - leadMedium.getWidth()) < 5 || (leadMedium.mediumalienX + leadMedium.getWidth()) > (dWidth - leadMedium.getWidth() - 5)) {
                 if (i == 1) {
-                    currentMA.velocity = -currentMA.velocity;
+                    currentMA.mediumalienvelocity = -currentMA.mediumalienvelocity;
                     currentMA.setMediumalienY(currentMA.getMediumalienY() + 100);
                 } else {
                     currentMA.setMediumalienY(leadMedium.getMediumalienY());
-                    currentMA.velocity = -currentMA.velocity;
+                    currentMA.mediumalienvelocity = -currentMA.mediumalienvelocity;
                 }
 
             }
