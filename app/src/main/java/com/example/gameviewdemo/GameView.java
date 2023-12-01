@@ -201,19 +201,10 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
                 missiles.get(i).y -= missiles.get(i).mVelocity;
                 canvas.drawBitmap(missiles.get(i).missile, missiles.get(i).x, missiles.get(i).y, null);
 
-                Boolean contactAlienZero = missiles.get(i).x >= aliens.get(0).alienX && (missiles.get(i).x + missiles.get(i).getMissileWidth())
+
+                if (missiles.get(i).x >= aliens.get(0).alienX && (missiles.get(i).x + missiles.get(i).getMissileWidth())
                         <= (aliens.get(0).alienX + aliens.get(0).getWidth()) && missiles.get(i).y >= aliens.get(0).alienY &&
-                        missiles.get(i).y <= (aliens.get(0).alienY + aliens.get(0).getHeight());
-                Boolean contactAlienOne = missiles.get(i).x >= aliens.get(1).alienX && (missiles.get(i).x + missiles.get(i).getMissileWidth())
-                        <= (aliens.get(1).alienX + aliens.get(1).getWidth()) && missiles.get(i).y >= aliens.get(1).alienY &&
-                        missiles.get(i).y <= (aliens.get(1).alienY + aliens.get(1).getHeight());
-                Boolean contactMediumAlienZero = missiles.get(i).x >= mediumAliens.get(0).mediumalienX && (missiles.get(i).x + missiles.get(i).getMissileWidth())
-                        <= (mediumAliens.get(0).mediumalienX + mediumAliens.get(0).getWidth()) && missiles.get(i).y >= mediumAliens.get(0).mediumalienY &&
-                        missiles.get(i).y <= (mediumAliens.get(0).mediumalienY + mediumAliens.get(0).getHeight());
-                Boolean contactMediumAlienOne = missiles.get(i).x >= mediumAliens.get(1).mediumalienX && (missiles.get(i).x + missiles.get(i).getMissileWidth())
-                        <= (mediumAliens.get(1).mediumalienX + mediumAliens.get(1).getWidth()) && missiles.get(i).y >= mediumAliens.get(1).mediumalienY &&
-                        missiles.get(i).y <= (mediumAliens.get(1).mediumalienY + mediumAliens.get(1).getHeight());
-                if (contactAlienZero) {
+                        missiles.get(i).y <= (aliens.get(0).alienY + aliens.get(0).getHeight())) {
                     Explosion explosion = new Explosion(context);
                     explosion.explosionX = aliens.get(0).alienX + aliens.get(0).getWidth() / 2 - explosion.getExplosionWidth() / 2;
                     explosion.explosionY = aliens.get(0).alienY + aliens.get(0).getHeight() / 2 - explosion.getExplosionHeight() / 2;
@@ -223,7 +214,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
                     count++;
                     missiles.remove(i);
 
-                } else if (contactAlienOne) {
+                } else if (missiles.get(i).x >= aliens.get(1).alienX && (missiles.get(i).x + missiles.get(i).getMissileWidth())
+                        <= (aliens.get(1).alienX + aliens.get(1).getWidth()) && missiles.get(i).y >= aliens.get(1).alienY &&
+                        missiles.get(i).y <= (aliens.get(1).alienY + aliens.get(1).getHeight())) {
                     Explosion explosion = new Explosion(context);
                     explosion.explosionX = aliens.get(1).alienX + aliens.get(1).getWidth() / 2 - explosion.getExplosionWidth() / 2;
                     explosion.explosionY = aliens.get(1).alienY + aliens.get(1).getHeight() / 2 - explosion.getExplosionHeight() / 2;
@@ -235,7 +228,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
                 }
 //
 
-                else if (contactMediumAlienZero) {
+                else if (missiles.get(i).x >= mediumAliens.get(0).mediumalienX && (missiles.get(i).x + missiles.get(i).getMissileWidth())
+                        <= (mediumAliens.get(0).mediumalienX + mediumAliens.get(0).getWidth()) && missiles.get(i).y >= mediumAliens.get(0).mediumalienY &&
+                        missiles.get(i).y <= (mediumAliens.get(0).mediumalienY + mediumAliens.get(0).getHeight())) {
                     Explosion explosion = new Explosion(context);
                     explosion.explosionX = mediumAliens.get(0).mediumalienX + mediumAliens.get(0).getWidth() / 2 - explosion.getExplosionWidth() / 2;
                     explosion.explosionY = mediumAliens.get(0).mediumalienY + mediumAliens.get(0).getHeight() / 2 - explosion.getExplosionHeight() / 2;
@@ -247,7 +242,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
                     missiles.remove(i);
 
 
-                } else if (contactMediumAlienOne) {
+                } else if (missiles.get(i).x >= mediumAliens.get(1).mediumalienX && (missiles.get(i).x + missiles.get(i).getMissileWidth())
+                        <= (mediumAliens.get(1).mediumalienX + mediumAliens.get(1).getWidth()) && missiles.get(i).y >= mediumAliens.get(1).mediumalienY &&
+                        missiles.get(i).y <= (mediumAliens.get(1).mediumalienY + mediumAliens.get(1).getHeight())) {
                     Explosion explosion = new Explosion(context);
                     explosion.explosionX = mediumAliens.get(1).mediumalienX + mediumAliens.get(1).getWidth() / 2 - explosion.getExplosionWidth() / 2;
                     explosion.explosionY = mediumAliens.get(1).mediumalienY + mediumAliens.get(1).getHeight() / 2 - explosion.getExplosionHeight() / 2;
