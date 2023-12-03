@@ -2,6 +2,7 @@ package com.example.gameviewdemo;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -115,6 +116,44 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         super.draw(canvas);
         canvas.drawBitmap(background, null, rect, null);
         canvas.drawBitmap(tank, (dWidth / 2 - tankWidth / 2), dHeight - tankHeight, null);
+
+        if (aliens.get(0) == null && aliens.get(1) == null && mediumAliens.get(0) == null && mediumAliens.get(1) == null){
+            for (int i = 0; i < 2; i++) {
+                Alien alien = new Alien(context);
+                alien.setMediumalienX(alien.getMediumalienX() - i * (alien.getWidth() + 50));
+                aliens.set(i, alien);
+                MediumAlien mediumAlien = new MediumAlien(context);
+                mediumAlien.setMediumalienX(mediumAlien.getMediumalienX() - i * (mediumAlien.getWidth() + 50));
+                mediumAliens.set(i, mediumAlien);
+            }
+        }
+
+        for (int i = 0; i < aliens.size(); i++){
+            if (aliens.get(i) == null){
+                continue;
+            }
+            if (aliens.get(i).alienY > 800){
+                Intent intent = new Intent(context, GameOver.class);
+                intent.putExtra("score", (count * 10));
+                context.startActivity(intent);
+                ((Activity) context).finish();
+                break;
+            }
+        }
+
+        for (int i = 0; i < mediumAliens.size(); i++){
+            if (mediumAliens.get(i) == null){
+                continue;
+            }
+            if (mediumAliens.get(i).mediumalienY > 800){
+                Intent intent = new Intent(context, GameOver.class);
+                intent.putExtra("score", (count * 10));
+                context.startActivity(intent);
+                ((Activity) context).finish();
+                break;
+            }
+        }
+
 
 
         for (int i = 0; i < 2; i++) {
@@ -251,7 +290,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
                     explosion.explosionY = aliens.get(0).alienY + aliens.get(0).getHeight() / 2 - explosion.getExplosionHeight() / 2;
                     explosions.add(explosion);
                     aliens.set(0, null);
-                    count++;
+                    count += 10;
                     missiles.remove(i);
 
                 } else if (aliens.get(1) != null && missiles.get(i).x >= aliens.get(1).alienX && (missiles.get(i).x + missiles.get(i).getMissileWidth())
@@ -262,7 +301,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
                     explosion.explosionY = aliens.get(1).alienY + aliens.get(1).getHeight() / 2 - explosion.getExplosionHeight() / 2;
                     explosions.add(explosion);
                     aliens.set(1, null);
-                    count++;
+                    count += 10;
                     missiles.remove(i);
                 }
 //
@@ -275,7 +314,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
                     explosion.explosionY = mediumAliens.get(0).mediumalienY + mediumAliens.get(0).getHeight() / 2 - explosion.getExplosionHeight() / 2;
                     explosions.add(explosion);
                     mediumAliens.set(0, null);
-                    count++;
+                    count += 20;
                     missiles.remove(i);
 
 
@@ -287,7 +326,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
                     explosion.explosionY = mediumAliens.get(1).mediumalienY + mediumAliens.get(1).getHeight() / 2 - explosion.getExplosionHeight() / 2;
                     explosions.add(explosion);
                     mediumAliens.set(1, null);
-                    count++;
+                    count += 20;
                     missiles.remove(i);
 
                     }

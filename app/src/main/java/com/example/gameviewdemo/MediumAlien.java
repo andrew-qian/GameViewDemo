@@ -22,7 +22,7 @@ public class MediumAlien extends Alien {
     public void resetPosition() {
         mediumalienX = GameView.dWidth - 400;
         mediumalienY = 250;
-        mediumalienvelocity = 25;
+        mediumalienvelocity = 125;
         mediumalienFrame = 0;
     }
 
