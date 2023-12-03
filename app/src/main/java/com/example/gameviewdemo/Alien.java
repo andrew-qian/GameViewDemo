@@ -3,68 +3,56 @@ package com.example.gameviewdemo;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 
 public class Alien {
 
-    Bitmap alien[] = new Bitmap[2];
+    Bitmap bitmaps[] = new Bitmap[2];
 
-    int alienX, alienY, velocity, alienFrame;
+    int x, y, frame, height, width, rowPosition;
 
 
-    public Alien(Context context) {
-        alien[0] = BitmapFactory.decodeResource(context.getResources(), R.drawable.small_alien1);
-        alien[1] = BitmapFactory.decodeResource(context.getResources(), R.drawable.small_alien2);
-        resetPosition();
+    public Alien(Context context, int x, int y, int width, int height, int rowPosition) {
+        bitmaps[0] = BitmapFactory.decodeResource(context.getResources(), R.drawable.small_alien1);
+        bitmaps[1] = BitmapFactory.decodeResource(context.getResources(), R.drawable.small_alien2);
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height;
+        this.rowPosition = rowPosition;
+        frame = 0;
     }
 
-    public void resetPosition(){
-        alienX = GameView.dWidth - 400;
-        alienY = 100;
-        velocity = 15;
-        alienFrame = 0;
+    public Bitmap getBitmap(int frame) {
+        return bitmaps[frame];
     }
 
-    public void blankSprite(Context context) {
-        Bitmap temp[] = new Bitmap[2];
-        temp[0] = BitmapFactory.decodeResource(context.getResources(), R.drawable.blank_pixel);
-        temp[1] = BitmapFactory.decodeResource(context.getResources(), R.drawable.blank_pixel);
-        setAlien(temp);
+    public int getX() {
+        return x;
     }
 
-    public Bitmap getBitmap(){
-        return alien[alienFrame];
+    public void setPosition(int x, int y) {
+        this.x = x;
+        this.y = y;
     }
 
-    public int getWidth(){
-        return alien[0].getWidth();
-    }
-
-    public int getHeight(){
-        return alien[0].getHeight();
-    }
-
-    public void setMediumalienX(int mediumalienX) {
-        this.alienX = mediumalienX;
-    }
-
-    public int getMediumalienX() {
-        return alienX;
-    }
-
-    public int getMediumalienY() {
-        return alienY;
-    }
-
-    public void setMediumalienY(int mediumalienY) {
-        this.alienY = mediumalienY;
+    public int getY() {
+        return y;
     }
 
 
-    public Bitmap[] getAlien() {
-        return alien;
+    public int getFrame() {
+        return frame;
     }
 
-    public void setAlien(Bitmap[] alien) {
-        this.alien = alien;
+    public void updateFrame() {
+        this.frame = (frame+1) % 2;
     }
+
+    public void draw(Canvas canvas){
+        canvas.drawBitmap(bitmaps[frame], x, y, null);
+
+    }
+
+
 }
