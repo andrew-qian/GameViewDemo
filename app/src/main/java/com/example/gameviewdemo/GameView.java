@@ -20,7 +20,7 @@ import java.util.ArrayList;
 public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     private MainThread thread;
 
-    Bitmap background, tank;
+    Bitmap background;
     Rect rect;
     static int dWidth, dHeight;
     ArrayList<Alien> aliens;
@@ -31,10 +31,11 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     Handler handler;
     Runnable runnable;
     final long UPDATE_MILLIS = 30;
-    int tankWidth;
-    static int tankHeight;
 
-    AlienRow alienRow;
+
+    AlienRow alienRow1, alienRow2;
+
+    Tank tank;
 
     Context context;
     int fire = 0, point = 0, count = 0;
@@ -47,7 +48,6 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         getHolder().addCallback(this);
 
         background = BitmapFactory.decodeResource(getResources(), R.drawable.background);
-        tank = BitmapFactory.decodeResource(getResources(), R.drawable.tank);
         Display display = ((Activity) getContext()).getWindowManager().getDefaultDisplay();
         Point size = new Point();
         display.getSize(size);
@@ -60,8 +60,10 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         missiles = new ArrayList<>();
         explosions = new ArrayList<>();
 
-        alienRow = new AlienRow(context, 3, 15, 90, 65, 0);
+        alienRow1 = new AlienRow(context, 3, 15, 90, 65, 0);
+        alienRow2 = new AlienRow(context, 3, 15, 90, 65, 1);
 
+        tank = new Tank(context, (int)(dWidth / 2 - (int)900 / 2), (int)(dHeight - (int)580), 580, 900);
 
         handler = new Handler();
         runnable = new Runnable() {
@@ -70,8 +72,6 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
                 invalidate();
             }
         };
-        tankWidth = tank.getWidth();
-        tankHeight = tank.getHeight();
     }
 
     @Override
@@ -109,8 +109,15 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     public void draw(Canvas canvas){
         super.draw(canvas);
         canvas.drawBitmap(background, null, rect, null);
-        canvas.drawBitmap(tank, (dWidth / 2 - tankWidth / 2), dHeight - tankHeight, null);
+        moveRow(alienRow1, canvas);
+        moveRow(alienRow2, canvas);
+        tank.draw(canvas);
 
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void moveRow(AlienRow alienRow, Canvas canvas){
@@ -119,13 +126,13 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         if (nextX <= 0){
             nextX = 0;
             alienRow.changeDirection();
-            nextY += alienRow.height;
+            nextY += alienRow.height*3;
         }
 
-        if (nextX > dWidth + alienRow.alienWidth){
-            nextX = dWidth - alienRow.alienWidth;
+        if (nextX > dWidth - alienRow.alienWidth*6){
+            nextX = dWidth - alienRow.alienWidth*6;
             alienRow.changeDirection();
-            nextY += alienRow.height;
+            nextY += alienRow.height*3;
         }
 
         alienRow.setPosition(nextX, nextY);
@@ -136,19 +143,28 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
 
 
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         float touchX = event.getX();
         float touchY = event.getY();
         int action = event.getAction();
-        if(action == MotionEvent.ACTION_DOWN){
-            if(touchX >= (dWidth/2 - tankWidth/2) && touchX <= (dWidth/2 + tankWidth/2) && touchY >= (dHeight - tankHeight)){ // change so on some button
-                Log.i("Tank","is tapped");
-                if (missiles.size() < 3) {
-                    Missile m = new Missile(context);
-                    missiles.add(m);
-                }
-            }
+        // change so on some button
+//        if(action == MotionEvent.ACTION_DOWN){
+//            if(touchX >= (dWidth/2 - tank.width/2) && touchX <= (dWidth/2 + tank.width/2) && touchY >= (dHeight - tank.height)){
+//                Log.i("Tank","is tapped");
+//                if (missiles.size() < 3) {
+//                    Missile m = new Missile(context);
+//                    missiles.add(m);
+//                }
+//            }
+//
+//        }
+        if(event.getAction() == MotionEvent.ACTION_DOWN){
+            tank.x = (int)touchX;
+        }
+        if(event.getAction() == MotionEvent.ACTION_MOVE){
+            tank.x = (int)touchX;
         }
         return true;
     }
