@@ -9,14 +9,14 @@ public class AlienRow {
 
     ArrayList<Alien> alienArray = new ArrayList<>();
 
-    int velocity, width, height, x, y, alienWidth;
+    int velocity, width, height, x, y, alienWidth, numAliens;
 
 
     public AlienRow(Context context, int numAliens, int velocity,int alienWidth, int alienHeight, int rowNum) {
         for (int i = 0; i < numAliens; i++){
             alienArray.add(new Alien(context, i* alienWidth, rowNum * alienHeight, alienWidth, alienHeight, i));
         }
-
+        this.numAliens = numAliens;
         this.x = 0;
         this.y = rowNum * alienHeight *3;
         this.width = numAliens *alienWidth;

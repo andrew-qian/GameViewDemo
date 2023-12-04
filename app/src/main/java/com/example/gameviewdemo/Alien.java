@@ -51,7 +51,6 @@ public class Alien {
 
     public void draw(Canvas canvas){
         canvas.drawBitmap(bitmaps[frame], x, y, null);
-
     }
 
 

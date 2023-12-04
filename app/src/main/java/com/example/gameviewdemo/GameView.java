@@ -38,6 +38,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     Tank tank;
 
     Context context;
+
+    Button button;
     int fire = 0, point = 0, count = 0;
 
 
@@ -63,7 +65,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         alienRow1 = new AlienRow(context, 3, 15, 90, 65, 0);
         alienRow2 = new AlienRow(context, 3, 15, 90, 65, 1);
 
-        tank = new Tank(context, (int)(dWidth / 2 - (int)900 / 2), (int)(dHeight - (int)580), 580, 900);
+        tank = new Tank(context, (dWidth / 2 - 90 / 2), (dHeight - 58), 58, 90);
+
+        button = new Button(context);
 
         handler = new Handler();
         runnable = new Runnable() {
@@ -112,6 +116,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         moveRow(alienRow1, canvas);
         moveRow(alienRow2, canvas);
         tank.draw(canvas);
+        button.draw(canvas);
 
         try {
             Thread.sleep(100);
@@ -129,8 +134,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
             nextY += alienRow.height*3;
         }
 
-        if (nextX > dWidth - alienRow.alienWidth*6){
-            nextX = dWidth - alienRow.alienWidth*6;
+        if (nextX > dWidth - alienRow.alienWidth*alienRow.numAliens*2){
+            nextX = dWidth - alienRow.alienWidth*alienRow.numAliens*2;
             alienRow.changeDirection();
             nextY += alienRow.height*3;
         }
