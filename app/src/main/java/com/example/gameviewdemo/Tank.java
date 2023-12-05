@@ -11,12 +11,13 @@ public class Tank {
     int height, width;
     Bitmap tankBitmap;
 
-    public Tank(Context context, int x, int y, int height, int width) {
-        tankBitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.tank);
+    public Tank(Context context, int x, int y, int width, int height) {
+        Bitmap init  = BitmapFactory.decodeResource(context.getResources(), R.drawable.tank);
+        tankBitmap = Bitmap.createScaledBitmap(init, width, height, false);
         this.x = x;
         this.y = y;
-        this.height = height;
         this.width = width;
+        this.height = height;
     }
 
     public void setPosition(int x, int y) {

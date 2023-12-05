@@ -13,8 +13,10 @@ public class Alien {
 
 
     public Alien(Context context, int x, int y, int width, int height, int rowPosition) {
-        bitmaps[0] = BitmapFactory.decodeResource(context.getResources(), R.drawable.small_alien1);
-        bitmaps[1] = BitmapFactory.decodeResource(context.getResources(), R.drawable.small_alien2);
+        Bitmap init0  = BitmapFactory.decodeResource(context.getResources(), R.drawable.small_alien1);
+        Bitmap init1  = BitmapFactory.decodeResource(context.getResources(), R.drawable.small_alien2);
+        bitmaps[0] = Bitmap.createScaledBitmap(init0, width, height, false);
+        bitmaps[1] = Bitmap.createScaledBitmap(init1, width, height, false);
         this.x = x;
         this.y = y;
         this.width = width;
