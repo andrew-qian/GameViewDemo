@@ -14,7 +14,7 @@ public class AlienRow {
 
     public AlienRow(Context context, int numAliens, int velocity,int alienWidth, int alienHeight, int rowNum) {
         for (int i = 0; i < numAliens; i++){
-            alienArray.add(new Alien(context, i* alienWidth, rowNum * alienHeight, alienWidth, alienHeight, i));
+            alienArray.add(new Alien(context, i* alienWidth , rowNum * alienHeight, alienWidth, alienHeight, i));
         }
         this.numAliens = numAliens;
         this.x = 0;

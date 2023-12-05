@@ -34,9 +34,6 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     Runnable runnable;
     final long UPDATE_MILLIS = 30;
 
-
-    AlienRow alienRow1, alienRow2;
-
     Tank tank;
 
     Context context;
@@ -46,6 +43,12 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     Arrow arrowLeft, arrowRight;
 
     public static final int NUM_ALIENROWS = 3;
+
+    public static final int ALIEN_VELOCITY = 15;
+
+    public static final int NUMALIENS = 5;
+
+
 
     int fire = 0, point = 0, count = 0;
 
@@ -71,24 +74,32 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         explosions = new ArrayList<>();
         alienrows = new ArrayList<>();
 
+        int alienWidth = dWidth/8;
+
+        int tankWidth = dWidth / 5;
+        int tankHeight = dWidth / 8;
+        int tankX = (dWidth / 2 - tankBitmap.getWidth()/2);
+        int tankY = (dHeight - 580);
+
+        int buttonX = dWidth * 2 / 3;
+        int buttonY = dHeight * 5 / 6;
+
+        int arrowWidth = dWidth / 6;
+        int leftArrowX = dWidth /8;
+        int arrowY = dHeight * 6 / 7;
+
+
         for (int i = 0; i < NUM_ALIENROWS; i++){
-            AlienRow alienRow = new AlienRow(context, 3, 15, dWidth / 8, dWidth / 8, i);
+            AlienRow alienRow = new AlienRow(context, NUMALIENS, ALIEN_VELOCITY, alienWidth, alienWidth, i);
             alienrows.add(alienRow);
         }
 
+        tank = new Tank(context, tankX, tankY, tankWidth, tankHeight);
 
+        button = new Button(context, buttonX, buttonY);
 
-        alienRow1 = new AlienRow(context, 3, 15, dWidth / 8, dWidth / 8, 0);
-        alienRow2 = new AlienRow(context, 3, 15, dWidth / 8, dWidth / 8, 1);
-
-        alienrows.add(alienRow1)
-
-        tank = new Tank(context, (dWidth / 2 - tankBitmap.getWidth()/2), (dHeight - 580), dWidth / 5, dWidth / 8);
-
-        button = new Button(context, dWidth * 2 / 3, dHeight * 5 / 6);
-
-        arrowLeft = new Arrow(context, dWidth /8, dHeight * 6 / 7, dWidth / 6, dWidth / 6, 0);
-        arrowRight = new Arrow(context, dWidth /8 + dWidth / 6 + dWidth / 50, dHeight * 6 / 7 , dWidth / 6, dWidth / 6, 1);
+        arrowLeft = new Arrow(context, leftArrowX, arrowY, arrowWidth, arrowWidth, 0);
+        arrowRight = new Arrow(context, leftArrowX + arrowWidth + dWidth / 50, arrowY , arrowWidth, arrowWidth, 1);
 
 
         handler = new Handler();
@@ -135,8 +146,11 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     public void draw(Canvas canvas) {
         super.draw(canvas);
         canvas.drawBitmap(background, null, rect, null);
-        moveRow(alienRow1, canvas);
-        moveRow(alienRow2, canvas);
+
+        for (AlienRow alienRow : alienrows){
+            moveRow(alienRow, canvas);
+        }
+
         tank.draw(canvas);
         button.draw(canvas);
         arrowLeft.draw(canvas);
@@ -226,40 +240,35 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         }
     }
 
-    public void checkCollision(Canvas canvas){
+    public void checkCollision(Canvas canvas) {
         ArrayList<Missile> missilesToDelete = new ArrayList<>();
-        ArrayList<Alien> alienRow1AliensToDelete = new ArrayList<>();
-        ArrayList<Alien> alienRow2AliensToDelete = new ArrayList<>();
+        ArrayList<Alien> alienRowAliensToDelete = new ArrayList<>();
 
-        for (Missile missile : missiles){
-            for (Alien alien : alienRow1.alienArray){
-                if (missileCollision(alien, missile)){
-                    Log.i("qian", "collision");
-                    addExplosion(canvas, alien);
-                    missilesToDelete.add(missile);
-                    alienRow1AliensToDelete.add(alien);
-                }
-            }
-            for (Alien alien : alienRow2.alienArray){
-                if (missileCollision(alien, missile)){
-                    Log.i("qian", "collision");
-                    addExplosion(canvas, alien);
-                    missilesToDelete.add(missile);
-                    alienRow2AliensToDelete.add(alien);
+        for (Missile missile : missiles) {
+            for (AlienRow alienRow : alienrows) {
+                for (Alien alien : alienRow.alienArray) {
+                    if (missileCollision(alien, missile)) {
+                        Log.i("qian", "collision");
+                        addExplosion(canvas, alien);
+                        missilesToDelete.add(missile);
+                        alienRowAliensToDelete.add(alien);
+                    }
                 }
             }
         }
 
-        for (Missile missile : missilesToDelete){
+        for (Missile missile : missilesToDelete) {
             missiles.remove(missile);
         }
-        for (Alien alien : alienRow1AliensToDelete){
-            alienRow1.removeAlien(alien);
-        }
-        for (Alien alien : alienRow2AliensToDelete){
-            alienRow2.removeAlien(alien);
+
+
+        for (Alien alien : alienRowAliensToDelete) {
+            for (AlienRow alienRow : alienrows) {
+                alienRow.removeAlien(alien);
+            }
         }
     }
+
 
     public boolean missileCollision(Alien alien, Missile missile) {
         if (alien.y + alien.height < missile.y || alien.y > missile.y + missile.getMissileHeight()) {
