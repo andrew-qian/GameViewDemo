@@ -6,13 +6,14 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 
 public class Missile {
-    int x, y;
+    int x, y, height, width;
 
     int mVelocity;
     Bitmap missile;
 
-    public Missile(Context context, int tankX, int tankY){
-        missile = BitmapFactory.decodeResource(context.getResources(), R.drawable.missile);
+    public Missile(Context context, int tankX, int tankY, int width, int height){
+        Bitmap init = BitmapFactory.decodeResource(context.getResources(), R.drawable.missile);
+        missile = Bitmap.createScaledBitmap(init, width, height, false);;
         x = tankX - getMissileWidth()/2;
         y = tankY - 58 - getMissileHeight()/2;
         mVelocity = 100;

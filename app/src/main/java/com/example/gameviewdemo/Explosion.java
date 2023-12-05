@@ -3,23 +3,31 @@ package com.example.gameviewdemo;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 
 public class Explosion {
 
-    Bitmap explosion[] = new Bitmap[1];
-    int explosionFrame=0;
-    int explosionX, explosionY;
+    Bitmap explosion;
+    int x,y;
 
-    public Explosion(Context context){
-        explosion[0] = BitmapFactory.decodeResource(context.getResources(), R.drawable.explosion);
+    public Explosion(Context context, Alien alien){
+        Bitmap init = BitmapFactory.decodeResource(context.getResources(), R.drawable.explosion);
+        explosion = Bitmap.createScaledBitmap(init, alien.width, alien.height, false);
+        this.x = alien.x;
+        this.y = alien.y;
     }
     public Bitmap getExplosion(int explosionFrame){
-        return explosion[explosionFrame];
+        return explosion;
     }
     public int getExplosionWidth(){
-        return explosion[0].getWidth();
+        return explosion.getWidth();
     }
     public int getExplosionHeight(){
-        return explosion[0].getHeight();
+        return explosion.getHeight();
     }
+
+    public void draw(Canvas canvas){
+        canvas.drawBitmap(explosion, x, y, null);
+    }
+
 }

@@ -28,6 +28,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     ArrayList<Missile> missiles;
     ArrayList<Explosion> explosions;
 
+    ArrayList<AlienRow> alienrows;
+
     Handler handler;
     Runnable runnable;
     final long UPDATE_MILLIS = 30;
@@ -42,6 +44,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     Button button;
 
     Arrow arrowLeft, arrowRight;
+
+    public static final int NUM_ALIENROWS = 3;
+
     int fire = 0, point = 0, count = 0;
 
 
@@ -64,9 +69,19 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         mediumAliens = new ArrayList<>();
         missiles = new ArrayList<>();
         explosions = new ArrayList<>();
+        alienrows = new ArrayList<>();
+
+        for (int i = 0; i < NUM_ALIENROWS; i++){
+            AlienRow alienRow = new AlienRow(context, 3, 15, dWidth / 8, dWidth / 8, i);
+            alienrows.add(alienRow);
+        }
+
+
 
         alienRow1 = new AlienRow(context, 3, 15, dWidth / 8, dWidth / 8, 0);
         alienRow2 = new AlienRow(context, 3, 15, dWidth / 8, dWidth / 8, 1);
+
+        alienrows.add(alienRow1)
 
         tank = new Tank(context, (dWidth / 2 - tankBitmap.getWidth()/2), (dHeight - 580), dWidth / 5, dWidth / 8);
 
@@ -128,8 +143,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         arrowRight.draw(canvas);
 
         moveMissile(canvas);
-        checkCollision();
-
+        checkCollision(canvas);
 
         try {
             Thread.sleep(100);
@@ -173,28 +187,26 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
                 Log.i("Qian", "missile created");
                 button.updateFrame();
                 if (missiles.size() < 3) {
-                    Missile m = new Missile(context, tank.x + tank.getWidth()/2, tank.y);
+                    Missile m = new Missile(context, tank.x + tank.getWidth()/2, tank.y, dWidth/32, dHeight/16);
                     missiles.add(m);
                 }
 
             }
 
             if (touchX >= (arrowLeft.x) && touchX <= (arrowLeft.x + arrowLeft.bitmaps[0].getWidth()) && touchY >= (arrowLeft.y) && touchY <= (arrowLeft.y + arrowLeft.bitmaps[0].getHeight())) {
-                tank.x -= 15;
-
+                if (!(tank.x - 60 < 0)){
+                    tank.x -= 60;
+                }
             }
 
             if (touchX >= (arrowRight.x) && touchX <= (arrowRight.x + arrowRight.bitmaps[0].getWidth()) && touchY >= (arrowRight.y) && touchY <= (arrowRight.y + arrowRight.bitmaps[0].getHeight())) {
-                tank.x += 15;
-
+                if (!(tank.x + tank.getWidth() + 60 > dWidth)){
+                    tank.x += 60;
+                }
             }
         }
 
         return false;
-
-    }
-
-    public void moveTank(){
 
     }
 
@@ -214,7 +226,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         }
     }
 
-    public void checkCollision(){
+    public void checkCollision(Canvas canvas){
         ArrayList<Missile> missilesToDelete = new ArrayList<>();
         ArrayList<Alien> alienRow1AliensToDelete = new ArrayList<>();
         ArrayList<Alien> alienRow2AliensToDelete = new ArrayList<>();
@@ -223,6 +235,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
             for (Alien alien : alienRow1.alienArray){
                 if (missileCollision(alien, missile)){
                     Log.i("qian", "collision");
+                    addExplosion(canvas, alien);
                     missilesToDelete.add(missile);
                     alienRow1AliensToDelete.add(alien);
                 }
@@ -230,6 +243,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
             for (Alien alien : alienRow2.alienArray){
                 if (missileCollision(alien, missile)){
                     Log.i("qian", "collision");
+                    addExplosion(canvas, alien);
                     missilesToDelete.add(missile);
                     alienRow2AliensToDelete.add(alien);
                 }
@@ -257,11 +271,11 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         return true;
     }
 
-    public void addExplosion(Alien alien){
-        Explosion explosion = new Explosion(context);
-        explosion.explosionX = alien.x + alien.width / 2 - explosion.getExplosionWidth() / 2;
-        explosion.explosionY = alien.y + alien.height / 2 - explosion.getExplosionHeight() / 2;
-        explosions.add(explosion);
+    public void addExplosion(Canvas canvas, Alien alien){
+        Explosion explosion = new Explosion(context, alien);
+        explosion.x = alien.x + alien.width / 2 - explosion.getExplosionWidth() / 2;
+        explosion.y = alien.y + alien.height / 2 - explosion.getExplosionHeight() / 2;
+        explosion.draw(canvas);
     }
 
 
