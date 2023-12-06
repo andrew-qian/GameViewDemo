@@ -125,4 +125,15 @@ public class AlienMatrix {
         }
         return false;
     }
+
+    public boolean isAllDead(){
+        for (int r = 0; r < 3; r++){
+            for (int c = 0; c < 5; c++){
+                if (matrix[r][c] != null){
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
 }

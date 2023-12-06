@@ -43,13 +43,15 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     public static final int NUM_ALIENROWS = 3;
 
-    public static final int ALIEN_VELOCITY = 120;
+    public static final int ALIEN_VELOCITY = 15;
 
     public static final int NUMALIENS = 5;
 
+    boolean isGameOverScreenDisplayed = false;
 
 
-    int fire = 0, point = 0, count = 0;
+
+    int count = 0, instances = 0;
 
 
     public GameView(Context context) {
@@ -153,9 +155,17 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         moveMissile(canvas);
         checkCollision(canvas);
 
-        if (alienMatrix.gameOverCheck(tank.y)){
+        if (alienMatrix.isAllDead()){
+            instances += 1;
+            alienMatrix = new AlienMatrix(context, 0, 0, (int)(ALIEN_VELOCITY* Math.pow(1.15, instances)), dWidth/8, dWidth/8);
+        }
+
+        if (!isGameOverScreenDisplayed && alienMatrix.gameOverCheck(tank.y)){
+            isGameOverScreenDisplayed = true;
             Intent intent = new Intent(this.getContext(), GameOver.class);
+            intent.putExtra("score", (count * 10));
             this.getContext().startActivity(intent);
+            Log.i("Qian", "switching screens");
         }
 
         try {
@@ -181,7 +191,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
             if (touchX >= (button.x) && touchX <= (button.x + button.bitmaps[0].getWidth()) && touchY >= (button.y) && touchY <= (button.y + button.bitmaps[0].getHeight())) {
                 Log.i("Qian", "missile created");
                 button.updateFrame();
-                if (missiles.size() < 3) {
+                if (missiles.size() < 1) {
                     Missile m = new Missile(context, tank.x + tank.getWidth()/2, tank.y, dWidth/32, dHeight/16);
                     missiles.add(m);
                 }
@@ -228,6 +238,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
             Alien alien = alienMatrix.didCollide(missile);
             if (alien != null){
                 Log.i("qian", "collision");
+                count += 10;
                 addExplosion(canvas, alien);
                 missilesToDelete.add(missile);
                 alienMatrix.removeAlien(alien);
