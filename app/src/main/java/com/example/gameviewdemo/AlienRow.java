@@ -44,7 +44,7 @@ public class AlienRow {
         this.x = x;
         this.y = y;
         for (int i = 0; i < alienArray.size(); i++){
-            alienArray.get(i).setPosition(x+alienWidth*i, y);
+            alienArray.get(i).setPosition(x+alienArray.get(i).getX(), y);
         }
     }
 
